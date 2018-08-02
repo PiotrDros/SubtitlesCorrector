@@ -11,6 +11,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -34,42 +35,48 @@ public class SubtitlesCorrector {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Optional<Path> first = Files.find(Paths.get("."), 1, SubtitlesCorrector::filter).findFirst();
+		List<Path> paths = Files.find(Paths.get("."), 1, SubtitlesCorrector::filter).collect(Collectors.toList());
 
 		String message;
-		if (first.isPresent()) {
-			Path path = first.get();
-			message = "Processing with file: " + path;
-
-			List<String> lines = Files.readAllLines(path);
-
-			try (PrintWriter writer = new PrintWriter(
-					Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING))) {
-				for (String line : lines) {
-					// @formatter:off
-					writer.println(line
-							.replace('¹', 'ą')
-							.replace('æ', 'ć')
-							.replace('ê', 'ę')
-							.replace('³', 'ł')
-							.replace('£', 'Ł')
-							.replace('ñ', 'ń')
-							.replace('œ', 'ś')
-							.replace('Œ', 'Ś')
-							.replace('Ÿ', 'ź')
-							.replace('¿', 'ż')
-							.replace('¯', 'Ż')
-						    .replace('„', '\"')
-						);
-					// @formatter:on
-				}
-
-			}
-		} else {
+		if (paths.isEmpty()) {
 			message = "Subtitles not found";
+		} else {
+			message = "Processing files: ";
+			for (Path path : paths) {
+				process(path);
+				message = message + path.getFileName() + ";";
+			}
 		}
 
 		JOptionPane.showMessageDialog(null, message);
+	}
+
+	private static void process(Path path) throws IOException {
+
+		List<String> lines = Files.readAllLines(path);
+
+		try (PrintWriter writer = new PrintWriter(
+				Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING))) {
+			for (String line : lines) {
+				// @formatter:off
+				writer.println(line
+						.replace('¹', 'ą')
+						.replace('æ', 'ć')
+						.replace('ê', 'ę')
+						.replace('³', 'ł')
+						.replace('£', 'Ł')
+						.replace('ñ', 'ń')
+						.replace('œ', 'ś')
+						.replace('Œ', 'Ś')
+						.replace('Ÿ', 'ź')
+						.replace('¿', 'ż')
+						.replace('¯', 'Ż')
+					    .replace('„', '\"')
+					);
+				// @formatter:on
+			}
+
+		}
 	}
 
 }
