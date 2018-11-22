@@ -1,0 +1,22 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'com.piotr.SubtitlesCorrector'
+
+group = 'com.piotr'
+version = '0.2.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    baseName = project.name
+    version = "${version}"
+    manifest {
+        attributes 'Main-Class': "${mainClassName}"
+    }
+}

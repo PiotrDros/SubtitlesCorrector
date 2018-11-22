@@ -18,7 +18,11 @@ target/
 .mvn
 mvnw
 mvnw.cmd
+build/
 
 #pmd
 reports/
 logs/
+
+#Gradle
+.gradle
